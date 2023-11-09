@@ -16,6 +16,7 @@ const uint8_t menuButton = TSButtonLowerLeft;
 const uint8_t viewButton = TSButtonLowerRight;
 const uint8_t clearButton = TSButtonLowerRight;
 
+
 void buttonPress(uint8_t buttons) {
   if (currentDisplayState == displayStateHome) {
     if (buttons == viewButton) {

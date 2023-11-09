@@ -116,6 +116,7 @@ const FONT_INFO& font22pt = liberationSansNarrow_22ptFontInfo;
 
 void setup(void)
 {
+randomSeed(analogRead(0)); // SLOT MACHINE
 #if defined (ARDUINO_ARCH_AVR)
   for (int i = 0; i < 20; i++) {
     pinMode(i, INPUT_PULLUP);

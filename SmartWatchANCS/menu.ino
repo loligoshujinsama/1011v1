@@ -6,6 +6,11 @@ typedef struct
   void (*selectionHandler)(uint8_t);
 } menu_info;
 
+unsigned long timerDuration = 25 * 60 * 1000; // 25 minutes in milliseconds
+boolean pomodoroActive = false; // Flag to indicate if Pomodoro timer is active
+bool pomodoroPaused = false;
+unsigned long elapsedTimeWhenPaused = 0; 
+unsigned long pausedTime = 0; 
 
 uint8_t menuHistory[5];
 uint8_t menuHistoryIndex = 0;
@@ -42,15 +47,10 @@ void newMenu(int8_t newIndex) {
   }
 }
 
-enum GameState {
-  MENU,
-  PING_PONG_GAME, // Add this game state
-};
-
 static const char PROGMEM mainMenuStrings0[] = "Set date/time";
 static const char PROGMEM mainMenuStrings1[] = "Set auto off";
 static const char PROGMEM mainMenuStrings2[] = "Set brightness";
-static const char PROGMEM mainMenuStrings3[] = "Games"; // ADD more options here
+static const char PROGMEM mainMenuStrings3[] = "Others"; // ADD more options here
 
 static const char* const PROGMEM mainMenuStrings[] =
 {
@@ -101,6 +101,15 @@ int currentDigit = 0;
 int maxDigit = 4;
 int *originalVal;
 void (*editIntCallBack)() = NULL;
+
+  /****** SLOTS *******/
+int number1 = 0;
+int number2 = 0;
+int number3 = 0;
+int credits = 10;
+
+bool slotRunning = false;
+bool win = false;
 
 uint8_t editInt(uint8_t button, int *inVal, char *intName, void (*cb)()) {
   if (menu_debug_print)SerialMonitorInterface.println("editInt");
@@ -169,41 +178,190 @@ uint8_t editInt(uint8_t button, int *inVal, char *intName, void (*cb)()) {
   return 0;
 }
 
-static const char PROGMEM gamesMenuStrings0[] = "Game #1";
+static const char PROGMEM gamesMenuStrings0[] = "Slot machine";
 static const char PROGMEM gamesMenuStrings1[] = "Game #2";
+static const char PROGMEM gamesMenuStrings2[] = "Pomodoro Timer";
 
 static const char* const PROGMEM gamesMenuStrings[] =
 {
   gamesMenuStrings0,
   gamesMenuStrings1,
+  gamesMenuStrings2,
 };
 
 const menu_info gamesMenuInfo =
 {
-  2,
+  3,
   gamesMenuStrings,
   gamesMenu,
 };
 #define gamesMenuIndex 2 // Adjust the index according to your menuList array
 
-// Define gamesMenu function to display game options
+void updatePomodoroTimer() {
+  if (!pomodoroPaused) { // Only update if Pomodoro is not paused
+    unsigned long elapsedTime = millis() - startTime; // Calculate elapsed time
+
+    if (elapsedTime >= timerDuration) {
+      display.clearWindow(0, 25, 96, 39);
+      display.setFont(thinPixel7_10ptFontInfo);
+      display.setCursor(10, 25);
+      display.fontColor(TS_8b_Red, TS_8b_Black);
+      display.print("Time's up!");
+      while (true) {
+        // Loop indefinitely after timer is done
+      }
+    }
+
+    unsigned long remainingTime = timerDuration - elapsedTime;
+    unsigned long minutes = remainingTime / (60 * 1000);
+    unsigned long seconds = (remainingTime / 1000) % 60;
+
+    display.setFont(thinPixel7_10ptFontInfo);
+    int width = display.getPrintWidth("Pomodoro Timer");
+    display.setFlip(true);
+    display.setCursor(48 - (width / 2), 10);
+    display.fontColor(TS_8b_Green, TS_8b_Black);
+    display.print("Pomodoro Timer");
+
+    char timeString[10];
+    sprintf(timeString, "%02lu:%02lu", minutes, seconds);
+
+    display.clearWindow(0, 25, 96, 39);
+    display.setFont(liberationSans_22ptFontInfo);
+    display.setCursor(10, 25);
+    display.fontColor(TS_8b_Blue, TS_8b_Black);
+    display.print(timeString);
+  }
+}
+
+
+void initializePomodoroTimer() {
+  startTime = millis(); // Record the start time
+}
+
+void pausePomodoro() {
+  if (!pomodoroPaused) {
+    pausedTime = millis();
+    pomodoroPaused = true;
+  }
+}
+
+void resumePomodoro() {
+  if (pomodoroPaused) {
+    startTime = millis() - (pausedTime - startTime);
+    pomodoroPaused = false;
+  }
+}
+
+uint8_t getButtonPress() {
+  if (digitalRead(display.getButtons(TSButtonLowerLeft)) == LOW) {
+    delay(50);
+    return upButton;
+  } else if (digitalRead(display.getButtons(TSButtonLowerLeft)) == LOW) {
+    delay(50);
+    return downButton;
+  }
+  return 0;
+}
+
+void slots() {
+  int xPos = 25;
+  display.clearWindow(xPos, 50, 96, 39); // Updates the number portion
+  if (credits > 0) {
+    if (slotRunning) {
+      number1 = random(10);
+      number2 = random(10);
+      number3 = random(10);
+    }
+    display.setCursor(15, 10);
+    display.print("$lot Machine");
+    display.setCursor(15, 20);
+    display.print("Credits: ");
+    display.print(credits);
+    display.setCursor(xPos, 50);
+    display.print(number1);
+    display.setCursor(xPos + 20, 50);
+    display.print(number2);
+    display.setCursor(xPos + 40, 50);
+    display.print(number3);
+    int winXPos = (96 - display.getPrintWidth("WIN")) / 2;
+    if (!slotRunning && number1 == number2 && number2 == number3) {
+      display.setCursor(winXPos, 35); 
+      display.print("WIN");
+      win = true;
+    }
+
+    if (display.getButtons(TSButtonLowerRight)) {
+      slotRunning = false;
+    }
+
+    if (!slotRunning && display.getButtons(TSButtonLowerLeft)) {
+      if (win) {
+        credits+=10;
+        win=false; // reset flag
+      } else {
+        credits--;
+      }
+      slotRunning = true;
+      display.clearWindow(winXPos, 20, 96, 39);
+    }
+
+    delay(100); // Adjust the delay as needed
+  } else {
+    int textWidth = display.getPrintWidth("No more CREDITS");
+    int textXPos = (96 - textWidth) / 2;
+    display.clearScreen();
+    display.setCursor(textXPos, 20);
+    display.print("No more CREDITS");
+    int textWidth2 = display.getPrintWidth("real COPIUM");
+    int textXPos2 = (96 - textWidth2) / 2;
+    display.setCursor(textXPos2, 40); // Adjust the Y position for the second line
+    display.print("real COPIUM");
+    delay(1000); // due to the nature of loops, 1s delay is required...
+  }
+}
 void gamesMenu(uint8_t selection) {
   if (menu_debug_print) SerialMonitorInterface.print("gamesMenu ");
   if (menu_debug_print) SerialMonitorInterface.println(selection);
 
   if (selection == 0) {
-    display.clearWindow(0, 12, 96, 64);
-    display.setFont(font10pt);
-    display.setCursor(10, menuTextY[0]);
-    display.print("Game #1");
   } else if (selection == 1) {
     display.clearWindow(0, 12, 96, 64);
     display.setFont(font10pt);
     display.setCursor(10, menuTextY[0]);
     display.print("Game #2");
-  }
-}
+  } else if (selection == 2) {
+    if (!pomodoroPaused) {
+      startTime = millis(); // Update the existing startTime variable
+    }
+    pomodoroActive = true; // Set Pomodoro active flag
+    display.clearWindow(0, 12, 96, 64);
+    display.setFont(font10pt);
+    display.setCursor(10, menuTextY[0]);
 
+    // Use a loop to handle the Pomodoro Timer
+    while (pomodoroActive) {
+      if (!pomodoroPaused) {
+        updatePomodoroTimer();
+      }
+
+      // Check for button presses
+      if (display.getButtons(TSButtonLowerLeft)) {
+        pausePomodoro();
+      } else if (display.getButtons(TSButtonLowerRight)) {
+        resumePomodoro();
+      } else if (display.getButtons(TSButtonUpperLeft)) {
+        if (pomodoroActive) {
+          pomodoroActive = false;
+        }
+        newMenu(menuHistory[--menuHistoryIndex]); // Go back to the previous menu
+        display.clearWindow(0, 12, 96, 64);
+        return;
+      }
+    }
+  }
+  pomodoroPaused = false; // Reset the pause flag when starting a new Pomodoro
+}
 
 // Add the gamesMenuInfo to the menuList
 const menu_info menuList[] = {mainMenuInfo, dateTimeMenuInfo, gamesMenuInfo}; 
@@ -271,6 +429,7 @@ void viewMenu(uint8_t button) {
   if (!button) {
     newMenu(mainMenuIndex);
     display.clearWindow(0, 12, 96, 64);
+    pomodoroActive = false; // Set Pomodoro active flag to false
   } else {
     if (button == upButton) {
       if (currentSelectionLine > 0) {
@@ -330,4 +489,6 @@ void viewMenu(uint8_t button) {
     lastMenuLine = currentMenuLine;
     lastSelectionLine = currentSelectionLine;
   }
+
+
 }
