@@ -201,7 +201,7 @@ static const char PROGMEM gamesMenuStrings2[] = "Pomodoro Timer";
 static const char PROGMEM gamesMenuStrings3[] = "Coin toss";
 static const char PROGMEM gamesMenuStrings4[] = "Dice simul.";
 static const char PROGMEM gamesMenuStrings5[] = "Scissors P S";
-static const char PROGMEM gamesMenuStrings6[] = "Scuffed BlackJ";
+static const char PROGMEM gamesMenuStrings6[] = "Big or Small";
 static const char PROGMEM gamesMenuStrings7[] = "Credit Miner";
 
 
@@ -530,8 +530,7 @@ void gamesMenu(uint8_t selection) {
               accel.read();
               if (accel.Z > 250)  {
                 display.drawRect(xPos - 10, yPos - 10, 20, 20, TSRectangleNoFill, TS_8b_White);
-                
-                display.drawPixel(xPos, yPos, TS_8b_Red); 
+                display.drawPixel(xPos, yPos, TS_8b_White); 
                 display.setCursor(0, 12);
                 display.print("<");
                 SerialMonitorInterface.println(rando);
@@ -545,8 +544,8 @@ void gamesMenu(uint8_t selection) {
               if (accel.Z > 250) {
                 display.drawRect(xPos - 10, yPos - 10, 20, 20, TSRectangleNoFill, TS_8b_White);
                 
-                display.drawPixel(xPos - 4, yPos - 4, TS_8b_Red); // Top-left dot
-                display.drawPixel(xPos + 4, yPos + 4, TS_8b_Red); // Bottom-right dot
+                display.drawPixel(xPos - 4, yPos - 4, TS_8b_White); // Top-left dot
+                display.drawPixel(xPos + 4, yPos + 4, TS_8b_White); // Bottom-right dot
                 display.setCursor(0, 12);
                 display.print("<");
                 SerialMonitorInterface.println(rando);
@@ -559,9 +558,9 @@ void gamesMenu(uint8_t selection) {
               if (accel.Z > 250)  {
                 display.drawRect(xPos - 10, yPos - 10, 20, 20, TSRectangleNoFill, TS_8b_White);
                 // Draw the dice face with dots near two corners resembling the number 3
-                display.drawPixel(xPos - 4, yPos - 4, TS_8b_Red); // Top-left dot
+                display.drawPixel(xPos - 4, yPos - 4, TS_8b_White); // Top-left dot
                 display.drawPixel(xPos, yPos, TS_8b_Red);         // Center dot
-                display.drawPixel(xPos + 4, yPos + 4, TS_8b_Red); // Bottom-right dot
+                display.drawPixel(xPos + 4, yPos + 4, TS_8b_White); // Bottom-right dot
                 display.setCursor(0, 12);
                 display.print("<");
                 SerialMonitorInterface.println(rando);
@@ -575,10 +574,10 @@ void gamesMenu(uint8_t selection) {
                 display.drawRect(xPos - 10, yPos - 10, 20, 20, TSRectangleNoFill, TS_8b_White);
             
                 // Draw the dice face with dots near two corners resembling the number 4
-                display.drawPixel(xPos - 4, yPos - 4, TS_8b_Red); // Top-left dot
-                display.drawPixel(xPos + 4, yPos - 4, TS_8b_Red); // Top-right dot
-                display.drawPixel(xPos - 4, yPos + 4, TS_8b_Red); // Bottom-left dot
-                display.drawPixel(xPos + 4, yPos + 4, TS_8b_Red); // Bottom-right dot
+                display.drawPixel(xPos - 4, yPos - 4, TS_8b_White); // Top-left dot
+                display.drawPixel(xPos + 4, yPos - 4, TS_8b_White); // Top-right dot
+                display.drawPixel(xPos - 4, yPos + 4, TS_8b_White); // Bottom-left dot
+                display.drawPixel(xPos + 4, yPos + 4, TS_8b_White); // Bottom-right dot
                 display.setCursor(0, 12);
                 display.print("<");
                 SerialMonitorInterface.println(rando);
@@ -590,11 +589,11 @@ void gamesMenu(uint8_t selection) {
               accel.read();
               if (accel.Z > 250){
                 display.drawRect(xPos - 10, yPos - 10, 20, 20, TSRectangleNoFill, TS_8b_White);
-                display.drawPixel(xPos - 3, yPos - 3, TS_8b_Red); // Top-left dot
-                display.drawPixel(xPos + 3, yPos - 3, TS_8b_Red); // Top-right dot
-                display.drawPixel(xPos, yPos, TS_8b_Red);         // Center dot
-                display.drawPixel(xPos - 3, yPos + 3, TS_8b_Red); // Bottom-left dot
-                display.drawPixel(xPos + 3, yPos + 3, TS_8b_Red); // Bottom-right dot
+                display.drawPixel(xPos - 3, yPos - 3, TS_8b_White); // Top-left dot
+                display.drawPixel(xPos + 3, yPos - 3, TS_8b_White); // Top-right dot
+                display.drawPixel(xPos, yPos, TS_8b_White);         // Center dot
+                display.drawPixel(xPos - 3, yPos + 3, TS_8b_White); // Bottom-left dot
+                display.drawPixel(xPos + 3, yPos + 3, TS_8b_White); // Bottom-right dot
                 display.setCursor(0, 12);
                 display.print("<");
                 SerialMonitorInterface.println(rando);
@@ -607,12 +606,12 @@ void gamesMenu(uint8_t selection) {
               if (accel.Z > 250){
                 display.drawRect(xPos - 10, yPos - 10, 20, 20, TSRectangleNoFill, TS_8b_White);
                 // Draw the dice face with dots near two corners resembling the number 6
-                display.drawPixel(xPos - 3, yPos - 3, TS_8b_Red); // Top-left dot
-                display.drawPixel(xPos + 3, yPos - 3, TS_8b_Red); // Top-right dot
-                display.drawPixel(xPos - 3, yPos, TS_8b_Red);         // Middle left dot
-                display.drawPixel(xPos + 3, yPos, TS_8b_Red); // Middle right dot
-                display.drawPixel(xPos - 3, yPos + 3, TS_8b_Red); // Bottom-left dot
-                display.drawPixel(xPos + 3, yPos + 3, TS_8b_Red); // Bottom-right dot
+                display.drawPixel(xPos - 3, yPos - 3, TS_8b_White); // Top-left dot
+                display.drawPixel(xPos + 3, yPos - 3, TS_8b_White); // Top-right dot
+                display.drawPixel(xPos - 3, yPos, TS_8b_White);         // Middle left dot
+                display.drawPixel(xPos + 3, yPos, TS_8b_White); // Middle right dot
+                display.drawPixel(xPos - 3, yPos + 3, TS_8b_White); // Bottom-left dot
+                display.drawPixel(xPos + 3, yPos + 3, TS_8b_White); // Bottom-right dot
                 display.setCursor(0, 12);
                 display.print("<");
                 SerialMonitorInterface.println(rando);
@@ -678,6 +677,9 @@ void gamesMenu(uint8_t selection) {
             }
         } else {
             broke();
+            choiceMade = false;
+            display.clearWindow(0, 12, 96, 64);
+            spsDisplay();
         }
     }
   } else if (selection == 6) {
@@ -862,11 +864,17 @@ void movetoadd() {
 }
 
 void ooc() {
-  display.drawRect(0,0,96,64,TSRectangleFilled,RED);
-  display.setFont(liberationSans_10ptFontInfo);
-  display.fontColor(TS_8b_White, TS_8b_Red);
-  display.setCursor(10,30);
-  display.print("BROKE BOZO");
+  display.setFont(liberationSans_16ptFontInfo);
+  display.fontColor(TS_8b_Red, TS_8b_Black);
+  display.setCursor(0,20);
+  display.print("BROKE");
+  display.setCursor(40,40);
+  display.print("BOZO");
+  delay(600000);
+  credits+=10;
+  display.clearWindow(0, 12, 96, 64);
+  display.setFont(liberationSans_8ptFontInfo);
+  display.fontColor(WHITE, BLACK);
 }
 
 // Add the gamesMenuInfo to the menuList
@@ -1068,8 +1076,8 @@ void broke() {
   display.setCursor(15, 44);
   display.print("with credits!");
 
-  delay(3000); // Show for 3 seconds
-  spsDisplay();
+  delay(600000); // Show for 10 minutes
+  credits+= 10;
 }
 
 void spsDisplay() {
