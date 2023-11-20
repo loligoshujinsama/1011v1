@@ -11,7 +11,7 @@ typedef struct
   void (*selectionHandler)(uint8_t);
 } menu_info;
 
-unsigned long timerDuration = 1 * 10 * 1000; // 25 minutes in milliseconds
+unsigned long timerDuration = 25 * 60 * 1000; // 25 minutes in milliseconds
 boolean pomodoroActive = false; // Flag to indicate if Pomodoro timer is active
 bool pomodoroPaused = false;
 unsigned long elapsedTimeWhenPaused = 0; 
