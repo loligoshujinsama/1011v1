@@ -1,20 +1,3 @@
-/*************************************************************************
-   BME680 Air Quality Index Example:
-   
-   Calculates and graphs an Air Quality Index (AQI) based on the 
-   raw VOC readings of the BME680. Note that the air quality metric
-   becomes slightly more accurate the longer the sketch is run
-   without interruption. This is because 40% of the calculation is
-   based on the ratio between current raw air quality and the
-   extreme levels of air quality in the past 18 hours.
-
-   Hardware by: TinyCircuits
-   BME680 Library by: Adafruit
-   Code by: Zachary Lee for TinyCircuits
-
-   Initiated: Mon. 08/05/19
- ************************************************************************/
-
 // This library is used for communication with I2C devices, such as the BME680 board
 #include <Wire.h>
 
